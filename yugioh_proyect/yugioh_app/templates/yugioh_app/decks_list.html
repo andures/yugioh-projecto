@@ -1,20 +1,21 @@
-{% extends 'yugioh_app/base.html' %}
+{% extends "yugioh_app/base.html" %}
 
 {% block content %}
-<div class="container mt-4">
-  <h2>Mis Decks</h2>
-  <div>
-      {% if decks %}
-          <ul class="list-group">
-              {% for deck in decks %}
-                  <li class="list-group-item">
-                      <a href="{% url 'deck_detail' deck.id %}">{{ deck.nombre }}</a>
-                  </li>
-              {% endfor %}
-          </ul>
-      {% else %}
-          <p>No tienes decks guardados. <a href="{% url 'deck_create' %}">Crea uno nuevo</a></p>
-      {% endif %}
-  </div>
-</div>
+<h1>Lista de Decks</h1>
+
+{% if decks %}
+    <ul>
+        {% for deck in decks %}
+            <li>
+                <a href="{% url 'deck_detail' deck.id %}">{{ deck.nombre }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No tienes ningún deck creado aún.</p>
+{% endif %}
+
+<!-- Botón para crear un nuevo deck (se muestra siempre) -->
+<a href="{% url 'deck_create' %}" class="btn btn-primary">Crear Nuevo Deck</a>
+
 {% endblock %}
