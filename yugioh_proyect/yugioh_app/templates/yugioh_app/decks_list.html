@@ -1,0 +1,20 @@
+{% extends 'yugioh_app/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Mis Decks</h2>
+  <div>
+      {% if decks %}
+          <ul class="list-group">
+              {% for deck in decks %}
+                  <li class="list-group-item">
+                      <a href="{% url 'deck_detail' deck.id %}">{{ deck.nombre }}</a>
+                  </li>
+              {% endfor %}
+          </ul>
+      {% else %}
+          <p>No tienes decks guardados. <a href="{% url 'deck_create' %}">Crea uno nuevo</a></p>
+      {% endif %}
+  </div>
+</div>
+{% endblock %}

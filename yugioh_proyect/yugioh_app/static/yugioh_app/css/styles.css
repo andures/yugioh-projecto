@@ -1,0 +1,37 @@
+/* static/css/styles.css */
+
+/* Fondo y márgenes para las páginas */
+body {
+    background-color: #f4f4f9;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* Personalización de la barra de navegación */
+.navbar {
+    background-color: #1f1f1f;
+}
+
+.navbar a {
+    color: #fff !important;
+}
+
+.navbar a:hover {
+    color: #f0f0f0 !important;
+}
+
+/* Personalización del pie de página */
+footer {
+    background-color: #1f1f1f;
+    color: white;
+    text-align: center;
+}
+
+/* Márgenes para los bloques de contenido */
+.container {
+    margin-top: 30px;
+}
+
+footer p {
+    margin: 0;
+}

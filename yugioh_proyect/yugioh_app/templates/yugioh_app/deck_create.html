@@ -1,0 +1,34 @@
+{% extends "yugioh_app/base.html" %}
+
+{% block content %}
+  <div>
+     <!-- Barra de búsqueda -->
+     <div class="col-md-3">
+        <h4>Búsqueda de cartas</h4>
+        <input type="text" id="search" class="form-control" placeholder="Buscar carta...">
+        <ul id="search-results" class="list-group mt-3"></ul>
+    </div>
+
+    <!-- Lista de cartas agregadas al deck -->
+    <div class="col-md-6">
+        <h4>Deck</h4>
+        <ul id="deck-list" class="list-group">
+            <!-- Cartas agregadas al deck se mostrarán aquí -->
+        </ul>
+    </div>
+
+    <!-- Mostrar cartas disponibles -->
+    <div class="col-md-3">
+        <h4>Cartas disponibles</h4>
+        <ul id="available-cards" class="list-group">
+            <!-- Cartas disponibles para agregar se mostrarán aquí -->
+        </ul>
+    </div>
+  </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Aquí va el JavaScript que vimos anteriormente para la búsqueda de cartas y la manipulación del deck.
+</script>
+{% endblock %}

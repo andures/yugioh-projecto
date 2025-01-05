@@ -1,0 +1,12 @@
+{% extends 'yugioh_app/base.html' %}
+
+{% block content %}
+  <h1>{{ deck.nombre }}</h1>
+  <p>Creado por: {{ deck.usuario.username }}</p>
+  <h2>Cartas en este Deck</h2>
+  <ul>
+    {% for carta_deck in deck.cartadeck_set.all %}
+      <li>{{ carta_deck.carta.nombre }} ({{ carta_deck.cantidad }} cartas)</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
