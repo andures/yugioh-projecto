@@ -24,6 +24,19 @@ def deck_detail(request, deck_id):
     cartas_en_deck = CartaDeck.objects.filter(deck=deck)
     return render(request, 'yugioh_app/deck_detail.html', {'deck': deck, 'cartas_en_deck': cartas_en_deck})
 
+# vista para eliminar un deck
+def deck_delete(request, deck_id):
+    deck = get_object_or_404(Deck, pk=deck_id)
+
+    # validacion para asegurar que solo el creador pueda eliminar su deck
+    if deck.usuario != request.user:
+        messages.error(request, "No tienes permiso para eliminar este deck.")
+    
+    # Eliminar el deck
+    deck.delete()
+    messages.success(request, "Deck eliminado con éxito.")
+    return redirect('decks_list')
+
 # Vista para crear un nuevo deck
 # Tipos de cartas válidas para el Extra Deck
 VALID_EXTRA_DECK_TYPES = [
