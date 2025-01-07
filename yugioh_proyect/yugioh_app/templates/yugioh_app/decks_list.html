@@ -1,9 +1,10 @@
 {% extends "yugioh_app/base.html" %}
+{% load static %}
 
 {% block content %}
 <h1>Lista de Decks</h1>
 
-<!-- Mostrar mensajes de éxito SOLO al eliminar -->
+<!-- Mostrar mensajes -->
 {% if messages %}
     {% for message in messages %}
         <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -13,23 +14,29 @@
     {% endfor %}
 {% endif %}
 
-{% if decks %}
-    <ul class="list-group">
+<!-- Contenedor de Decks usando grid con dos filas -->
+<div class="container">
+    <div class="row">
         {% for deck in decks %}
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <a href="{% url 'deck_detail' deck.id %}">{{ deck.nombre }}</a>
-                <form action="{% url 'deck_delete' deck.id %}" method="POST" style="display:inline;" 
-                      onsubmit="return confirm('¿Estás seguro de que deseas eliminar este deck?');">
+            <div class="col-md-2 mb-3 text-center">
+                <img src="{% static 'yugioh_app/img/deck_box.png' %}" alt="Deck Box" class="img-fluid" loading="lazy">
+                <p>{{ deck.nombre }}</p>
+                <form action="{% url 'deck_delete' deck.id %}" method="POST" 
+                      onsubmit="return confirm('¿Seguro que quieres eliminar este deck?');">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
                 </form>
-            </li>
+            </div>
+            {% if forloop.counter == 5 %}
+                </div><div class="row mt-3">
+            {% endif %}
         {% endfor %}
-    </ul>
-{% else %}
-    <p>No tienes ningún deck creado aún.</p>
-{% endif %}
+    </div>
+</div>
 
-<a href="{% url 'deck_create' %}" class="btn btn-primary mt-3">Crear Nuevo Deck</a>
-
+<!-- Contador de decks y botón para crear -->
+<p>Has creado {{ deck_count }} / {{ max_decks }} decks posibles.</p>
+<a href="{% url 'deck_create' %}" class="btn btn-primary mt-3 {% if deck_count >= max_decks %}disabled{% endif %}">
+    Crear Nuevo Deck
+</a>
 {% endblock %}

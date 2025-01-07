@@ -1,46 +1,59 @@
-<h2>Crear un nuevo Deck</h2>
-<form method="POST">
-    {% csrf_token %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<body style= "background-color: #27374D; ">
+    <form method="POST" style="max-width: 1400px; margin: 0 auto; padding: 20px; background-color: #f9f9f9; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);background-color: #9DB2BF ;">
+        {% csrf_token %}
 
-    <!-- Nombre del Deck -->
-    <label for="nombre_deck">Nombre del Deck:</label>
-    <input type="text" name="nombre_deck" required>
+        <div style="display: flex; justify-content: space-between; gap: 20px;">
 
-    <!-- Botón Guardar -->
-    <button type="submit" style="margin-left: 20px;">Guardar Deck</button><br><br>
+            <!-- Columna Izquierda: Datos y Selección de Cartas -->
+            <div style="width: 30%; border: 1px solid #27374D; padding: 5px; background-color: #526D82; border-radius: 8px;">
+                <!-- Nombre del Deck -->
+                <label for="nombre_deck" style="display: block; font-weight: bold; margin-bottom: 8px;">Nombre del Deck:</label>
+                <input type="text" name="nombre_deck" required style="width: 95%; padding: 10px; margin-bottom: 20px; border-radius: 4px; border: 1px solid #ccc;">
 
-    <!-- Buscador de Cartas -->
-    <input type="text" id="searchBar" onkeyup="buscarCarta()" placeholder="Buscar carta..." style="width: 100%; padding: 10px; margin-bottom: 10px;">
+                <!-- Botón Guardar -->
+                <button type="submit" style="padding: 10px 20px;width: 100%; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">Guardar Deck</button>
 
-    <!-- Contenedor Principal -->
-    <div style="display: flex; justify-content: space-between;">
+                <!-- Buscador de Cartas -->
+                <input type="text" id="searchBar" onkeyup="buscarCarta()" placeholder="Buscar carta..." style="width: 95%; padding: 10px; margin-top: 20px; border-radius: 4px; border: 1px solid #ccc;">
 
-        <!-- Columna Izquierda: Lista con Scroll -->
-        <div style="width: 60%; max-height: 500px; overflow-y: scroll; border: 1px solid gray; padding: 10px;">
-            <h3>Seleccionar Cartas</h3>
-            <ul id="cardList" style="list-style-type: none; padding: 0;">
-                {% for carta in cartas %}
-                <li style="margin-bottom: 10px;" oncontextmenu="agregarCarta('{{ carta.id }}', '{{ carta.nombre }}', '{{ carta.imagen_url }}', '{{ carta.frame_type }}'); return false;">
-                    <img src="{{ carta.imagen_url }}" alt="{{ carta.nombre }}" width="80px">
-                    <span>{{ carta.nombre }}</span>
-                </li>
-                {% endfor %}
-            </ul>
+                <!-- Lista de Cartas -->
+                <div style="max-height: 650px; overflow-y: scroll; margin-top: 20px;">
+                    <h3 style="text-align: center;">Seleccionar Cartas</h3>
+                    <ul id="cardList" style="list-style-type: none; padding: 0;">
+                        {% for carta in cartas %}
+                        <li style="display: flex; align-items: center; padding: 5px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 5px; width: auto;" 
+                            oncontextmenu="agregarCarta('{{ carta.id }}', '{{ carta.nombre }}', '{{ carta.imagen_url }}', '{{ carta.frame_type }}'); return false;">
+                            <img src="{{ carta.imagen_url }}" alt="{{ carta.nombre }}" width="80px" loading="lazy" style="border-radius: 4px;">
+                            <span style="margin-left: 10px; flex-grow: 1;">{{ carta.nombre }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Columna Derecha: Decks -->
+            <div style="width: 65%; border: 1px solid #ddd; padding: 10px; background-color: #fff; border-radius: 8px;">
+                <!-- Main Deck -->
+                <h3 style="text-align: center;">Main Deck (Máx 60 - Mín 40)</h3>
+                <div id="deckPreview" style="display: flex; flex-wrap: wrap; gap: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 20px;">
+                </div>
+
+                <!-- Extra Deck -->
+                <h3 style="text-align: center;">Extra Deck (Máx 15)</h3>
+                <div id="extraDeckPreview" style="display: flex; flex-wrap: wrap; gap: 10px; padding: 10px; border: 1px solid #ccc; border-radius: 8px;">
+                </div>
+            </div>
         </div>
-
-        <!-- Columna Derecha: Deck Preview con Scroll -->
-        <div style="width: 35%; border: 1px solid black; padding: 10px; max-height: 500px; overflow-y: scroll;">
-            <h3>Main Deck (Máx 60 - Mín 40)</h3>
-            <div id="deckPreview" style="display: flex; flex-wrap: wrap; gap: 10px;" oncontextmenu="eliminarCarta(event)"></div>
-            <h3>Extra Deck (Máx 15)</h3>
-            <div id="extraDeckPreview" style="display: flex; flex-wrap: wrap; gap: 10px;" oncontextmenu="eliminarCartaExtra(event)"></div>
-        </div>
-    </div>
-</form>
+    </form>
+</body>
+</html>
 
 <script>
-// Tipos de cartas válidas para el Extra Deck (actualizados)
-const validExtraDeckTypes = [
+// Definir los tipos válidos para el Extra Deck
+const VALID_EXTRA_DECK_TYPES = [
     "fusion",
     "link",
     "pendulum_fusion",
@@ -48,15 +61,15 @@ const validExtraDeckTypes = [
     "synchro_pendulum",
     "synchro_tuner",
     "xyz",
-    "XYZ_Pendulum"
+    "XYZ_Pendulum",
 ];
 
-// Bloquear el menú contextual del navegador en todo el documento
-document.addEventListener("contextmenu", function(event) {
-    event.preventDefault();  // Prevenir el menú contextual
+// Bloquear el menú contextual en toda la página
+document.addEventListener('contextmenu', function(e){
+    e.preventDefault(); // Esto evita que se muestre el menú contextual
 });
 
-// Buscar cartas en tiempo real
+// Función para buscar cartas (ya optimizada)
 function buscarCarta() {
     var input = document.getElementById('searchBar').value.toUpperCase();
     var lista = document.getElementById('cardList').getElementsByTagName('li');
@@ -66,118 +79,84 @@ function buscarCarta() {
     }
 }
 
-// Variables globales para el conteo de cartas
-let mainDeckCount = 0;
-let extraDeckCount = 0;
-let mainDeck = {};  // Objeto para contar las cartas en el Main Deck
-let extraDeck = {};  // Objeto para contar las cartas en el Extra Deck
+// Función para agregar cartas al deck con validación del Extra Deck
+function agregarCarta(cartaId, nombre, imagenUrl, tipoFrame) {
+    const maxCopias = 3;
+    const maxExtraDeck = 15;
+    const maxMainDeck = 60;
 
-// Agregar carta al Main Deck con clic derecho
-function agregarCarta(id, name, imageUrl, frameType) {
-    // Si la carta es válida para el Extra Deck, agregarla al Extra Deck
-    if (validExtraDeckTypes.includes(frameType)) {
-        agregarCartaExtra(id, name, imageUrl, frameType);
+    // Verifica cuántas veces se ha agregado la carta al deck
+    let deck;
+    if (VALID_EXTRA_DECK_TYPES.includes(tipoFrame)) {
+        // Si es del tipo Extra Deck, agregarla al Extra Deck
+        deck = document.getElementById('extraDeckPreview');
     } else {
-        // De lo contrario, agregarla al Main Deck
-        if (mainDeckCount >= 60) {
-            alert("No puedes agregar más de 60 cartas al Main Deck.");
-            return;
-        }
-
-        // Verificar si ya existen 3 cartas de la misma
-        if (mainDeck[id] && mainDeck[id] >= 3) {
-            alert("No puedes agregar más de 3 copias de esta carta en el Main Deck.");
-            return;
-        }
-
-        // Agregar una copia de la carta
-        mainDeck[id] = mainDeck[id] ? mainDeck[id] + 1 : 1;
-        mainDeckCount++;
-
-        var preview = document.getElementById('deckPreview');
-        var img = document.createElement('img');
-        img.src = imageUrl;
-        img.width = 50;
-        preview.appendChild(img);
+        // Si no, agregarla al Main Deck
+        deck = document.getElementById('deckPreview');
     }
-}
 
-// Agregar carta al Extra Deck (solo con clic derecho)
-function agregarCartaExtra(id, name, imageUrl, frameType) {
-    // Verificar si la carta tiene un frame_type válido para el Extra Deck
-    if (!validExtraDeckTypes.includes(frameType)) {
-        alert(`${name} no puede ser agregada al Extra Deck porque no es de un tipo válido.`);
+    const cartasEnDeck = deck.getElementsByTagName('div');
+    let cantidadCarta = 0;
+
+    // Verificación para contar cuántas copias de la carta están en el deck
+    for (let carta of cartasEnDeck) {
+        if (carta.getAttribute('data-carta-id') === cartaId) {
+            cantidadCarta++;
+        }
+    }
+
+    // Si ya hay 3 copias, no agregues más
+    if (cantidadCarta >= maxCopias) {
+        alert(`No puedes agregar más de ${maxCopias} copias de la carta ${nombre}`);
         return;
     }
 
-    // Limitar la cantidad de cartas en el Extra Deck a 15
-    if (extraDeckCount >= 15) {
-        alert("No puedes agregar más de 15 cartas al Extra Deck.");
+    // Validación de cantidad máxima para el Deck Principal y el Extra Deck
+    if (deck === document.getElementById('extraDeckPreview') && cartasEnDeck.length >= maxExtraDeck) {
+        alert(`No puedes agregar más de ${maxExtraDeck} cartas al Extra Deck.`);
         return;
     }
 
-    // Verificar si ya existen 3 cartas de la misma en el Extra Deck
-    if (extraDeck[id] && extraDeck[id] >= 3) {
-        alert("No puedes agregar más de 3 copias de esta carta en el Extra Deck.");
+    if (deck === document.getElementById('deckPreview') && cartasEnDeck.length >= maxMainDeck) {
+        alert(`No puedes agregar más de ${maxMainDeck} cartas al Main Deck.`);
         return;
     }
 
-    extraDeck[id] = extraDeck[id] ? extraDeck[id] + 1 : 1;
-    extraDeckCount++;
+    // Crear el nuevo elemento para la carta en el deck
+    const nuevaCarta = document.createElement('div');
+    nuevaCarta.setAttribute('data-carta-id', cartaId);
+    nuevaCarta.style.flex = '1 1 auto';
+    nuevaCarta.style.maxWidth = 'calc(10% - 5px)';
+    nuevaCarta.innerHTML = `
+        <img src="${imagenUrl}" alt="${nombre}"loading="lazy"style="border-radius: 4px; width: 100%; aspect-ratio: 3/4;">
+    `;
 
-    // Crear el elemento de la carta en el preview del Extra Deck
-    var preview = document.getElementById('extraDeckPreview');
-    var img = document.createElement('img');
-    img.src = imageUrl;
-    img.width = 50;
-    preview.appendChild(img);
+    // Agregar la carta al preview del deck (main o extra)
+    deck.appendChild(nuevaCarta);
 }
 
-// Eliminar carta del Extra Deck con clic derecho
-function eliminarCartaExtra(event) {
-    var img = event.target;
-    if (img.tagName === "IMG") {
-        // Buscar la carta en el Extra Deck y eliminarla
-        var cardId = img.src;
-        extraDeckCount--;
-        extraDeck[cardId]--;
-        if (extraDeck[cardId] <= 0) {
-            delete extraDeck[cardId];
+// funcion para redimensionar las cartas en el deck
+function ajustarTamañoCartas(deck) {
+    const cartas = deck.getElementsByTagName('div');
+    const containerwidth = deck.clientWidth;
+    const cartaBaseWidth = 80; // 80px
+    const cartasPorFila = Math.floor(containerwidth / cartaBaseWidth);
+    const nuevoAncho = Math.min(cartaBaseWidth, containerwidth / cartasPorFila - 5);
+    
+    for (let carta of cartas) {
+        carta.style.maxWidth = `${nuevoAncho}px`;
+    }
+}
+
+// Función para eliminar una carta del deck con clic derecho
+document.addEventListener('contextmenu', function(e) {
+    if (e.target.closest("#deckPreview") || e.target.closest("#extraDeckPreview")) {
+        e.preventDefault(); // Evitar que se muestre el menú contextual
+        let cartaElemento = e.target.closest('div');
+        
+        if (cartaElemento) {
+            cartaElemento.remove(); // Eliminar la carta seleccionada
         }
-
-        img.parentNode.removeChild(img);
     }
-}
-
-// Eliminar carta del Main Deck con clic derecho
-function eliminarCarta(event) {
-    var img = event.target;
-    if (img.tagName === "IMG") {
-        // Buscar la carta en el Main Deck y eliminarla
-        var cardId = img.src;
-        mainDeckCount--;
-        mainDeck[cardId]--;
-        if (mainDeck[cardId] <= 0) {
-            delete mainDeck[cardId];
-        }
-
-        img.parentNode.removeChild(img);
-    }
-}
-
-// Validación final para el Main Deck antes de enviar el formulario
-function validarDeck() {
-    if (mainDeckCount < 40) {
-        alert("El Main Deck debe tener al menos 40 cartas.");
-        return false;  // Evita el envío del formulario
-    }
-    if (mainDeckCount > 60) {
-        alert("El Main Deck no puede tener más de 60 cartas.");
-        return false;  // Evita el envío del formulario
-    }
-    return true;  // Permite el envío del formulario
-}
-
-// Asociamos la validación al evento del formulario
-document.querySelector("form").onsubmit = validarDeck;
+});
 </script>

@@ -3,6 +3,10 @@ from .models import Carta, Deck, CartaDeck
 import requests
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.db import transaction
+from collections import Counter
+
+MAX_DECKS = 10 # Cantidad máxima de decks que un usuario puede tener
 
 # Vista para la página de inicio
 def home(request):
@@ -15,8 +19,12 @@ def cartas_list(request):
 
 # Vista para listar todos los decks
 def decks_list(request):
-    decks = Deck.objects.all()  # Obtener todos los decks
-    return render(request, 'yugioh_app/decks_list.html', {'decks': decks})
+    #usando select_related para evitar hacer una consulta por cada deck
+    decks = Deck.objects.all().order_by('-id')[:10]  # Obtener todos los decks
+    deck_count = Deck.objects.count() # Contar la cantidad de decks
+    return render(request, 'yugioh_app/decks_list.html', {'decks': decks, 
+                                                          'deck_count': deck_count, 
+                                                          'max_decks': MAX_DECKS})
 
 # Vista para mostrar los detalles de un deck específico
 def deck_detail(request, deck_id):
@@ -53,44 +61,64 @@ VALID_EXTRA_DECK_TYPES = [
 def deck_create(request):
     if request.method == "POST":
         nombre_deck = request.POST.get('nombre_deck')
-        deck = Deck.objects.create(nombre=nombre_deck, usuario=request.user)
-
         cartas_seleccionadas = request.POST.getlist('cartas')
-        cantidades = request.POST.getlist('cantidad_cartas')
+        cantidades = list(map(int, request.POST.getlist('cantidad_cartas')))
         extra_cartas_seleccionadas = request.POST.getlist('extra_cartas')
-        extra_cantidades = request.POST.getlist('extra_cantidad_cartas')
+        extra_cantidades = list(map(int, request.POST.getlist('extra_cantidad_cartas')))
 
-        main_deck_count = sum(int(cantidad) for cantidad in cantidades)
-        extra_deck_count = sum(int(cantidad) for cantidad in extra_cantidades)
+        main_deck_count = sum(cantidades)
+        extra_deck_count = sum(extra_cantidades)
 
-        # Validaciones
+        # Validaciones de catidad todal de cartas en Main Deck y Extra Deck
         if not (40 <= main_deck_count <= 60):
             messages.error(request, "El deck principal debe tener entre 40 y 60 cartas.")
             return redirect('deck_create')
         if extra_deck_count > 15:
             messages.error(request, "El Extra Deck no puede tener más de 15 cartas.")
             return redirect('deck_create')
+        
+        # contar todas las cartas seleccionadas, tanto del main deck como del extra deck
+        all_cards = cartas_seleccionadas + extra_cartas_seleccionadas
+        all_cantidades = cantidades + extra_cantidades
 
-        # Validación para las cartas del Extra Deck
-        for carta_id in extra_cartas_seleccionadas:
-            carta = Carta.objects.get(id=carta_id)
-            if carta.frame_type not in VALID_EXTRA_DECK_TYPES:
-                messages.error(request, f"La carta {carta.nombre} no puede ser agregada al Extra Deck porque no es de tipo válido.")
+        # usar Counter para contar las cantidades de cartas
+        cartas_counter = Counter(dict(zip(all_cards, all_cantidades)))
+
+        # verificar que no haya mas de 3 copias de una carta
+        for carta_id, total_cantidad in cartas_counter.items():
+            if total_cantidad > 3:
+                carta = Carta.objects.get(id=carta_id)
+                messages.error(request, f"La carta {carta.nombre} no puede tener más de 3 copias.")
                 return redirect('deck_create')
 
-        # Guardar cartas del Main Deck
-        for carta_id, cantidad in zip(cartas_seleccionadas, cantidades):
-            carta = Carta.objects.get(id=carta_id)
-            CartaDeck.objects.create(deck=deck, carta=carta, cantidad=int(cantidad))
+        try:
+            with transaction.atomic():  # Garantizar que todo se guarde correctamente
+                # Crear el deck
+                deck = Deck.objects.create(nombre=nombre_deck, usuario=request.user)
 
-        # Guardar cartas del Extra Deck
-        for carta_id, cantidad in zip(extra_cartas_seleccionadas, extra_cantidades):
-            carta = Carta.objects.get(id=carta_id)
-            CartaDeck.objects.create(deck=deck, carta=carta, cantidad=int(cantidad))
+                # Recuperar todas las cartas en una sola consulta
+                todas_cartas_ids = set(cartas_seleccionadas + extra_cartas_seleccionadas)
+                cartas_dict = {carta.id: carta for carta in Carta.objects.filter(id__in=todas_cartas_ids)}
 
-        messages.success(request, "Deck creado con éxito.")
-        return redirect('deck_detail', deck_id=deck.id)
+                # Guardar main deck
+                for carta_id, cantidad in zip(cartas_seleccionadas, cantidades):
+                    CartaDeck.objects.create(deck=deck, carta=cartas_dict[int(carta_id)], cantidad=cantidad)
+                
+                # Guardar extra deck con validación
+                for carta_id, cantidad in zip(extra_cartas_seleccionadas, extra_cantidades):
+                    carta = cartas_dict[int(carta_id)]
+                    if carta.frame_type not in VALID_EXTRA_DECK_TYPES:
+                        messages.error(request, f"La carta {carta.nombre} no puede ser agregada al Extra Deck porque no es de tipo válido.")
+                        return redirect('deck_create')
+                    CartaDeck.objects.create(deck=deck, carta=carta, cantidad=cantidad)
 
-    # Cargar cartas desde la base de datos
+                messages.success(request, "Deck creado con éxito.")
+                return redirect('deck_detail', deck_id=deck.id)
+        
+        except Exception as e:
+            messages.error(request, f"Ocurrió un error al crear el deck: {str(e)}")
+            return redirect('deck_create')
+
+    # Si no es un POST, mostrar el formulario de creación de deck
     cartas = Carta.objects.all()
     return render(request, 'yugioh_app/deck_create.html', {'cartas': cartas})
