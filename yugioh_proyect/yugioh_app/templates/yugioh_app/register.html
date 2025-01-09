@@ -1,0 +1,55 @@
+{% extends 'yugioh_app/base.html' %}
+{% block head %}
+{% load static %}
+{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'yugioh_app/css/forms.css' %}">
+<div class="container">
+    <h2 class="text-center mb-4">Registro</h2>
+    <form class="form-with-validation" action="{% url 'register' %}" method="POST">
+        {% csrf_token %}
+        
+        <!-- Campo de Usuario -->
+        <div class="form-group">
+            <label for="id_username" class="form-label">Nombre de usuario</label>
+            {{ form.username }}
+            {% if form.username.errors %}
+                <div class="error">
+                    {% for error in form.username.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Campo de Contraseña -->
+        <div class="form-group">
+            <label for="id_password1" class="form-label">Contraseña</label>
+            {{ form.password1 }}
+            {% if form.password1.errors %}
+                <div class="error">
+                    {% for error in form.password1.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Confirmar Contraseña -->
+        <div class="form-group">
+            <label for="id_password2" class="form-label">Confirmar Contraseña</label>
+            {{ form.password2 }}
+            {% if form.password2.errors %}
+                <div class="error">
+                    {% for error in form.password2.errors %}
+                        <p>{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Botón de Registro -->
+        <button type="submit" class="btn btn-primary w-100">Registrar</button>
+    </form>
+</div>
+{% endblock %}

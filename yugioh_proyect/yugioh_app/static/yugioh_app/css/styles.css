@@ -1,19 +1,29 @@
 /* static/css/styles.css */
-
-/* Fondo y márgenes para las páginas */
+/* Ajustar el contenido para no quedar oculto detrás del navbar */
 body {
-    background-color: #f4f4f9;
+    padding-top: 70px; /* Ajustar según la altura del navbar */
     margin: 0;
     font-family: Arial, sans-serif;
+    box-sizing: border-box;
 }
 
 /* Personalización de la barra de navegación */
 .navbar {
     background-color: #1f1f1f;
+    position: fixed;      /* Fija el navbar */
+    top: 0;               /* Lo posiciona en la parte superior */
+    left: 0;              /* Lo alinea al extremo izquierdo */
+    width: 100%;          /* Ocupa todo el ancho */
+    z-index: 1050;        /* Asegura que esté al frente */
+    padding: 10px 0;      /* Añade un poco de espacio dentro del navbar */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.5); /* Agrega sombra para resaltar */
 }
 
 .navbar a {
     color: #fff !important;
+    text-decoration: none;
+    padding: 10px;
+    display: inline-block;
 }
 
 .navbar a:hover {
@@ -22,14 +32,19 @@ body {
 
 /* Personalización del pie de página */
 footer {
-    background-color: #1f1f1f;
-    color: white;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #121212; /* Fondo Principal */
+    color: #FFFFFF; /* Texto Principal */
     text-align: center;
+    padding: 15px 0;
 }
 
 /* Márgenes para los bloques de contenido */
 .container {
-    margin-top: 30px;
+    margin-top: 5px;
 }
 
 footer p {

@@ -1,0 +1,72 @@
+/* General */
+html, body {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    background-color: #121212; /* Fondo principal */
+}
+
+body{
+    padding-top: 250px; /* Ajustar según la altura del navbar */
+}
+
+.container {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 40px; /* Ajuste de padding para que no esté tan pegado */
+    background-color: #1E1E1E; /* Fondo Secundario */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    color: #FFFFFF; /* Texto principal */
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* Formularios */
+.form-with-validation {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-with-validation input,
+.form-with-validation button {
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+.form-with-validation input:focus,
+.form-with-validation button:focus {
+    outline: none;
+    border-color: #00AEEF; /* Color Primario */
+}
+
+.form-with-validation input {
+    width: 100%;
+}
+
+.form-with-validation button {
+    background-color: #00AEEF; /* Color Primario */
+    color: white;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+.form-with-validation button:hover {
+    background-color: #FF6F00; /* Color Secundario */
+}
+
+/* Estilos para errores */
+.form-with-validation .error {
+    color: #FF3131; /* Color de Error/Alerta */
+    font-size: 14px;
+    margin-top: -10px;
+}

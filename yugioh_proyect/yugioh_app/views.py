@@ -2,15 +2,52 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Carta, Deck, CartaDeck
 import requests
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
+from django.contrib import messages 
 from django.db import transaction
 from collections import Counter
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import logout , login
+
+
 
 MAX_DECKS = 10 # Cantidad máxima de decks que un usuario puede tener
 
 # Vista para la página de inicio
 def home(request):
     return render(request, 'yugioh_app/home.html')
+
+# vista para registar un usuario
+def register(request):
+    form = UserCreationForm()
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            login(request, form.save())
+            return redirect('home')
+        else:
+            form= UserCreationForm()
+    return render(request, 'yugioh_app/register.html', { 'form': form })
+
+# Vista para iniciar sesión
+def login_view(request):
+    if request.method == "POST":
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            login(request, form.get_user())
+            return redirect('home')
+    else:
+        form = AuthenticationForm()
+    return render(request, 'yugioh_app/login.html', {'form': form})
+
+# Vista para cerrar sesión
+def logout_view(request):
+    logout(request)
+    return redirect('home')
+
+# vista para la pagina de comunity
+def comunity(request):
+    
+    return render(request, 'yugioh_app/comunity.html')
 
 # Vista para listar todas las cartas
 def cartas_list(request):
@@ -57,7 +94,7 @@ VALID_EXTRA_DECK_TYPES = [
     "xyz",
     "XYZ_Pendulum",
 ]
-
+@login_required
 def deck_create(request):
     if request.method == "POST":
         nombre_deck = request.POST.get('nombre_deck')

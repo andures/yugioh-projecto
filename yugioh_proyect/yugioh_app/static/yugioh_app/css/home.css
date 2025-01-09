@@ -1,0 +1,268 @@
+/* Estilos generales */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box; /* Asegura que padding y border no afecten al tamaño total */
+}
+
+html, body {
+    height: 100%; /* Asegura que el body y html cubran todo el alto */
+    width: 100%;  /* Asegura que el body y html cubran todo el ancho */
+}
+
+body {
+    overflow-x: hidden; /* Evita el desplazamiento horizontal */
+    background-color: #121212; /* Fondo principal */
+    color: #FFFFFF; /* Texto principal */
+}
+
+/* Hero Section */
+.hero {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(44, 62, 80, 0.6); /* Mantengo el mismo fondo de la hero section */
+    color: white;
+    text-align: center;
+    overflow: hidden;
+    z-index: 1;
+}
+
+/* Animación de entrada al cargar */
+.initial-entry {
+    opacity: 0;
+    transform: translateX(-100px) rotate(-15deg);
+    animation: slideInFromLeft 1s forwards;
+}
+
+@keyframes slideInFromLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-100px) rotate(-15deg);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) rotate(0);
+    }
+}
+
+.cards-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    animation: floating 12s infinite ease-in-out;
+    z-index: -1;
+}
+
+/* Corrige el hover sin interrupciones */
+.floating-card {
+    width: 500px;
+    height: 650px;
+    object-fit: cover;
+    opacity: 0.8;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.floating-card:hover {
+    transform: scale(1.1) translateY(-20px) rotate(5deg); 
+    opacity: 1;
+    z-index: 10;
+}
+
+/* Animación de flotación */
+@keyframes floating {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+    100% { transform: translateY(0); }
+}
+
+/* Hero Content */
+.hero-content {
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    z-index: 1;
+}
+
+.hero h1 {
+    font-size: 3em;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.hero p {
+    font-size: 1.2em;
+    margin-bottom: 30px;
+}
+
+.btn-primary {
+    padding: 10px 20px;
+    background-color: #00AEEF; /* Color Primario */
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+.btn-primary:hover {
+    background-color: #FF6F00; /* Color Secundario */
+}
+
+/* Destacados de Cartas */
+.featured-cards {
+    padding: 50px 10%;
+    background-color: #1E1E1E; /* Fondo Secundario */
+    text-align: center;
+    z-index: 1; /* Asegura que las cartas destacadas estén encima del hero */
+}
+
+.featured-cards h2 {
+    font-size: 2em;
+    margin-bottom: 40px;
+}
+
+.cards {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.card {
+    width: 30%;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    border-radius: 8px;
+}
+
+.card img {
+    width: 300px;
+    height: 450px;
+    margin-bottom: 10px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.card p {
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+/* ¿Por qué elegirnos? */
+.why-us {
+    padding: 50px 10%;
+    background-color: #1E1E1E; /* Fondo Secundario */
+    text-align: center;
+}
+
+.why-us h2 {
+    font-size: 2em;
+    margin-bottom: 40px;
+}
+
+.features {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.feature {
+    width: 30%;
+    background-color: white;
+    padding: 20px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    border-radius: 8px;
+}
+
+.feature img {
+    width: 100px;
+    height: 150px;
+    margin-bottom: 10px;
+}
+
+/* ------------------------ */
+/* Diseño Responsivo */
+/* ------------------------ */
+
+/* Tablets (max-width: 1024px) */
+@media (max-width: 1024px) {
+    .hero h1 {
+        font-size: 2.5em;
+    }
+
+    .floating-card {
+        width: 300px;
+        height: 450px;
+    }
+
+    .cards, .features {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .card, .feature {
+        width: 45%;
+    }
+}
+
+/* Dispositivos móviles (max-width: 768px) */
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: 2em;
+    }
+
+    .hero-content {
+        top: 50%;
+        padding: 0 20px;
+    }
+
+    .floating-card {
+        width: 200px;
+        height: 300px;
+    }
+
+    .cards, .features {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .card, .feature {
+        width: 80%;
+    }
+
+    .card img {
+        width: 100%;
+        height: auto;
+    }
+}
+
+/* Dispositivos muy pequeños (max-width: 480px) */
+@media (max-width: 480px) {
+    .hero h1 {
+        font-size: 1.8em;
+    }
+
+    .hero p {
+        font-size: 1em;
+    }
+
+    .floating-card {
+        width: 150px;
+        height: 225px;
+    }
+
+    .card, .feature {
+        width: 100%;
+    }
+}

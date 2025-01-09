@@ -1,6 +1,60 @@
 {% extends 'yugioh_app/base.html' %}
-
+{% block head %}
+{% load static %}
+{% endblock %}
 {% block content %}
-    <h1>Bienvenido al sitio de Yugioh</h1>
-    <p>Administra tus decks y cartas aquí.</p>
+<link rel="stylesheet" href="{% static 'yugioh_app/css/home.css' %}">
+<!-- Hero Section -->
+<section class="hero">
+    <div class="cards-background">
+        <!-- Cartas flotando en el fondo con animación -->
+        <img src="{% static 'yugioh_app/img/thunder dragon .jpg' %}" class="floating-card initial-entry" alt="Carta 1">
+        <img src="{% static 'yugioh_app/img/crystal_wing_synchro_dragon.jpg' %}" class="floating-card initial-entry" alt="Carta 2">
+        <img src="{% static 'yugioh_app/img/cyber-dragon-infinity-en237.webp' %}" class="floating-card initial-entry" alt="Carta 3">
+        <img src="{% static 'yugioh_app/img/accesscode_talker.png' %}" class="floating-card initial-entry" alt="Carta 4">
+    </div>
+    <div class="hero-content">
+        <h1>Bienvenido a Yu-Gi-Oh!</h1>
+        <p>Gestiona tus cartas, crea tu deck y compite con otros jugadores.</p>
+        <a href="{% url 'decks_list' %}" class="btn-primary">¡Empieza Ahora!</a>
+    </div>
+</section>
+
+<!-- Destacados de Cartas -->
+<section class="featured-cards">
+    <h2>Cartas Destacadas</h2>
+    <div class="cards">
+        <div class="card">
+            <img src="{% static 'yugioh_app/img/thunder dragon .jpg' %}" alt="Carta 1">
+            <p>Dragón Blanco de Ojos Azules</p>
+        </div>
+        <div class="card">
+            <img src="{% static 'yugioh_app/img/thunder dragon .jpg' %}" alt="Carta 2">
+            <p>Dark Magician</p>
+        </div>
+        <div class="card">
+            <img src="{% static 'yugioh_app/img/thunder dragon .jpg' %}" alt="Carta 3">
+            <p>Red-Eyes Black Dragon</p>
+        </div>
+    </div>
+</section>
+
+<!-- ¿Por qué elegirnos? -->
+<section class="why-us">
+    <h2>¿Por qué elegir nuestro sitio?</h2>
+    <div class="features">
+        <div class="feature">
+            <img src="{% static 'yugioh_app/img/blue-dragon.png' %}" alt="Facilidad de uso">
+            <p>Fácil de usar</p>
+        </div>
+        <div class="feature">
+            <img src="{% static 'yugioh_app/img/thunder dragon .jpg' %}" alt="Organización">
+            <p>Organiza tus cartas y decks</p>
+        </div>
+        <div class="feature">
+            <img src="{% static 'yugioh_app/img/IPMasquerena.png' %}" alt="Competición">
+            <p>Compite con otros jugadores</p>
+        </div>
+    </div>
+</section>
 {% endblock %}
